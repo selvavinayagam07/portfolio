@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selvavinayagam A - Portfolio (Neon Tech)</title>
+   <canvas id="bg"></canvas>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+    body{background:#030014;color:#d9d9ff;overflow-x:hidden;}
+    /* Full-screen background canvas */
+#bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* behind everything */
+  background: linear-gradient(270deg, #0d0d20, #1a0033, #0d0d20);
+  animation: gradientShift 15s ease infinite;
+}
+
+/* Smooth gradient shift animation */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.profile-box {
+  width: 200px;         /* Square box */
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;     /* Hide anything outside circle */
+  box-shadow: 0 0 25px #6c00ff;
+  border: 3px solid #7a00ff;
+  animation: float 3s infinite ease-in-out alternate;
+  transition: transform 0.5s;
+  background: none;     /* Optional: remove background if photo covers */
+}
+
+.profile-box:hover {
+  transform: rotateY(10deg) rotateX(10deg) scale(1.08);
+}
+
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;    /* Fill the square perfectly */
+  border-radius: 50%;   /* Makes the image circular */
+  display: block;       /* Removes extra inline spacing */
+}
+
+    /* Neon Cursor */
+    #cursor{width:20px;height:20px;border:2px solid #6b00ff;border-radius:50%;position:fixed;pointer-events:none;transform:translate(-50%,-50%);z-index:9999;box-shadow:0 0 18px #6b00ff;}
+
+    /* Header */
+    header{display:flex;justify-content:space-between;align-items:center;padding:20px 40px;background:rgba(0,0,0,0.3);backdrop-filter:blur(12px);border-bottom:1px solid rgba(128,0,255,0.4);}  
+    header h1{font-size:32px;font-weight:900;background:linear-gradient(90deg,#8d4aff,#00eaff);-webkit-background-clip:text;color:transparent;}
+    nav a{margin-left:26px;text-decoration:none;color:#dcdcff;font-weight:500;transition:0.3s;} 
+    nav a:hover{color:#7f4bff;}
+
+    /* Hero */
+    .hero{display:flex;justify-content:space-between;align-items:center;padding:60px 40px;}
+    .hero-text h2{font-size:50px;font-weight:900;background:linear-gradient(90deg,#b66bff,#4bbdff);-webkit-background-clip:text;color:transparent;margin-bottom:20px;}
+    .hero-text p{max-width:550px;line-height:1.9;color:#bfbfff;}
+    .buttons a{display:inline-block;margin:25px 12px 0 0;padding:12px 26px;border-radius:10px;text-decoration:none;font-weight:600;color:white;background:linear-gradient(90deg,#6a00ff,#00e5ff);box-shadow:0 0 20px #6000ff;transition:0.3s;} 
+    .buttons a:hover{transform:scale(1.08);}  
+
+    /* Profile */
+    .profile-box{width:200px;height:200px;border-radius:20px;background:linear-gradient(135deg,#7800ff,#00eaff);display:flex;justify-content:center;align-items:center;font-size:70px;font-weight:900;color:white;box-shadow:0 0 25px #6c00ff;animation:float 3s infinite ease-in-out alternate;} 
+    @keyframes float{0%{transform:translateY(0);}100%{transform:translateY(-18px);} } 
+
+    /* Section */
+    .section{margin:40px;padding:30px;background:rgba(255,255,255,0.05);border-radius:16px;border:1px solid rgba(90,0,255,0.4);backdrop-filter:blur(16px);box-shadow:0 0 25px rgba(100,0,255,0.3);} 
+    .section h3{font-size:28px;margin-bottom:16px;color:#c3b8ff;} 
+
+    /* Cards */
+    .project,.education-item{padding:20px;border:1px solid rgba(128,0,255,0.3);border-radius:14px;margin-bottom:14px;background:rgba(255,255,255,0.03);transition:0.3s;box-shadow:0 0 12px rgba(100,0,255,0.2);} 
+    .project:hover,.education-item:hover{transform:scale(1.03);box-shadow:0 0 22px rgba(100,0,255,0.4);}  
+
+    .divider{height:2px;background:linear-gradient(90deg,transparent,#7a00ff,transparent);margin:25px 0;}  
+
+    .reveal{opacity:0;transform:translateY(40px);transition:1s;} 
+    .reveal.active{opacity:1;transform:translateY(0);}  
+
+    .tilt{transition:0.3s;} 
+    .tilt:hover{transform:rotateY(6deg) rotateX(6deg) scale(1.03);} 
+
+    /* Modal */
+    .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;justify-content:center;align-items:center;z-index:9999;}  
+    .modal-content{background:#090019;border:1px solid #7a00ff;padding:25px;border-radius:15px;width:80%;max-width:450px;color:#dcdcff;box-shadow:0 0 20px #7a00ff;} 
+
+    /* Preloader */
+    #preloader{position:fixed;top:0;left:0;width:100%;height:100%;background:#030014;display:flex;justify-content:center;align-items:center;z-index:10000;}  
+    .loader{width:60px;height:60px;border:4px solid #7a00ff;border-radius:50%;border-top-color:transparent;animation:spin 1s linear infinite;box-shadow:0 0 20px #7a00ff;}  
+    @keyframes spin{100%{transform:rotate(360deg);} }
+  </style>
+</head>
+
+<body>
+  <script>
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// Create particles
+for(let i=0;i<120;i++){
+  particles.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    r: Math.random()*2+1,
+    dx: (Math.random()-0.5)*0.5,
+    dy: (Math.random()-0.5)*0.5
+  });
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    p.x += p.dx;
+    p.y += p.dy;
+    
+    if(p.x<0 || p.x>canvas.width) p.dx*=-1;
+    if(p.y<0 || p.y>canvas.height) p.dy*=-1;
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(138,43,226,0.7)';
+    ctx.fill();
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+<div id="preloader"><div class="loader"></div></div>
+<div id="cursor"></div>
+
+<script>
+window.onload=()=>{document.getElementById('preloader').style.display='none';};
+document.addEventListener('mousemove',e=>{const c=document.getElementById('cursor');c.style.left=e.clientX+'px';c.style.top=e.clientY+'px';});
+function reveal(){document.querySelectorAll('.reveal').forEach(el=>{if(el.getBoundingClientRect().top < window.innerHeight-50){el.classList.add('active');}});} 
+window.addEventListener('scroll',reveal); 
+reveal();
+function openModal(text){document.getElementById('modal-text').innerHTML=text;document.getElementById('modal-box').style.display='flex';} 
+function closeModal(){document.getElementById('modal-box').style.display='none';}
+</script>
+
+<header class="reveal">
+  <h1>Selvavinayagam A</h1>
+  <nav>
+    <a href="#projects">Projects</a>
+    <a href="#education">Education</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero reveal">
+  <div class="hero-text">
+    <h2 id="title"></h2>
+    <script>
+      const txt="Hi, I'm Selvavinayagam";let i=0;
+      function type(){if(i<txt.length){document.getElementById('title').innerHTML=txt.slice(0,i+1);i++;setTimeout(type,70);} }
+      type();
+    </script>
+    <p>Final-year CSE Student • Java Developer • Web Developer building futuristic neon interfaces.</p>
+
+    <div class="buttons">
+      <a href="#projects">See My Work</a>
+      <a href="https://drive.google.com/uc?export=download&id=1eI2RvoLJZ5hd-FFk0t4hG_m7AoCN7EfA" download>Download Resume</a>
+    </div>
+  </div>
+
+  <div class="profile-box tilt">
+  <img src="selva_photo.jpg" alt="Selvavinayagam A" class="profile-photo">
+</div>
+</section>
+<!-- Modal -->
+<div id="modal-box" class="modal" onclick="closeModal()">
+  <div class="modal-content" id="modal-text"></div>
+</div>
+
+<!-- Career Objective -->
+<section class="section reveal" id="career-objective">
+  <h3><i class="fas fa-bullseye"></i> Career Objective</h3>
+  <p>To secure a challenging position in a reputable organization where I can utilize my technical skills, enhance my knowledge, and grow professionally.</p>
+</section>
+
+<!-- Education -->
+<section class="section reveal" id="education-full">
+  <h3><i class="fas fa-graduation-cap"></i> Education</h3>
+  <div class="education-item"><h4>B.E Computer Science and Engineering</h4><p>VSB Engineering College, Karur</p><p><b>CGPA:</b> 8.3</p></div>
+  <div class="education-item"><h4>HSC</h4><p>State Board School</p><p><b>Percentage:</b> 79%</p></div>
+  <div class="education-item"><h4>SSLC</h4><p>State Board School</p><p><b>Percentage:</b> 79%</p></div>
+</section>
+
+<!-- Technical Skills -->
+<section class="section reveal" id="skills">
+  <h3><i class="fas fa-tools"></i> Technical Skills</h3>
+  <ul>
+    <li>Java</li>
+    <li>HTML, CSS, JavaScript</li>
+    <li>DSA (LeetCode Daily Practice)</li>
+    <li>SQL Basics</li>
+    <li>Object-Oriented Programming</li>
+  </ul>
+</section>
+<section class="section reveal" id="projects">
+  <h3><i class="fas fa-folder-open"></i> Projects</h3>
+
+  <!-- Instant ID Creator goes to Live Demo -->
+  <a href="https://selvavinayagam07.github.io/ID-Card-Generator/" target="_blank" class="project tilt" style="text-decoration:none;color:inherit;">
+    <h4>Instant ID Creator</h4>
+    <p>HTML • CSS • JS</p>
+  </a>
+
+  <!-- Other projects use modal -->
+  <div class="project tilt" onclick="openModal('Java Swing billing + inventory management')">
+    <h4>Restaurant Management System</h4>
+    <p>Java Swing • Inventory & Billing System</p>
+  </div>
+</section>
+<!-- Other sections -->
+<section class="section reveal" id="internships">
+  <h3><i class="fas fa-building"></i> Internships</h3>
+  <ul>
+    <li>
+      <b>Braineryshot Technology, Coimbatore</b> – Java Developer Intern<br>
+      June 2024 – July 2024<br>
+      Worked on Java-based projects and gained practical experience in software development.
+    </li>
+  </ul>
+</section>
+<section class="section reveal" id="certifications">
+  <h3><i class="fas fa-certificate"></i> Certifications</h3>
+  <ul>
+    <li>Java Programming – Self Learned</li>
+    <li>Web Development Fundamentals</li>
+    <li>Hackerrank Problem Solving (Basic)</li>
+  </ul>
+</section>
+
+<section class="section reveal" id="strengths">
+  <h3><i class="fas fa-bolt"></i> Strengths</h3>
+  <ul>
+    <li>Self-motivated</li>
+    <li>Hardworking</li>
+    <li>Positive Mindset</li>
+    <li>Quick Learner</li>
+  </ul>
+</section>
+
+<section class="section reveal" id="hobbies">
+  <h3><i class="fas fa-gamepad"></i> Hobbies & Interests</h3>
+  <ul>
+    <li>Gym Workout</li>
+    <li>Listening to Music</li>
+    <li>Coding Daily</li>
+    <li>Exploring New Places</li>
+  </ul>
+</section>
+
+<section class="section reveal" id="languages">
+  <h3><i class="fas fa-language"></i> Languages Known</h3>
+  <ul>
+    <li>Tamil</li>
+    <li>English</li>
+  </ul>
+</section>
+
+<section class="section reveal" id="personal-details">
+  <h3><i class="fas fa-user"></i> Personal Details</h3>
+  <ul>
+    <li><b>Name:</b> Selvavinayagam A</li>
+    <li><b>Gender:</b> Male</li>
+    <li><b>Father’s Occupation:</b> Construction Worker Abroad</li>
+    <li><b>Siblings:</b> Three elder sisters</li>
+  </ul>
+</section>
+
+<section class="section reveal" id="address">
+  <h3><i class="fas fa-map-marker-alt"></i> Address</h3>
+  <p>Peerkalaikadu, Karaikudi City, Sivagangai District, Tamil Nadu, India</p>
+</section>
+
+<section class="section reveal" id="contact">
+  <h3><i class="fas fa-envelope"></i> Contact Me</h3>
+  <p>If you want to reach out, feel free to connect with me:</p>
+  <ul>
+    <li><b>Email:</b> <a href="mailto:selvavinayagam07@example.com" style="color:#7a00ff;">selvavinayagam07@example.com</a></li>
+    <li><b>Phone:</b> <a href="tel:+918807672847" style="color:#7a00ff;">+91 XXXXX XXXXX</a></li>
+    <li><b>LinkedIn:</b> <a href="https://www.linkedin.com/in/selvavinayagam07" target="_blank" style="color:#7a00ff;">linkedin.com/in/selvavinayagam07</a></li>
+    <li><b>GitHub:</b> <a href="https://github.com/selvavinayagam07" target="_blank" style="color:#7a00ff;">github.com/selvavinayagam07</a></li>
+  </ul>
+</section>
+<footer style="text-align:center;padding:20px;color:#999;">© 2025 Selvavinayagam — All Rights Reserved</footer>
+</body>
+</html>
